@@ -24,7 +24,7 @@ class Window (withDevTools: Boolean = true) {
     }
 
     fun setHTML(html: String) {
-        _url = "data:text/html,$html"
+        _url = "data:text/html;base64,$html"
     }
 
     fun setTitle(title: String) {

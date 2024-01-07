@@ -2,10 +2,9 @@ import org.levi.coffee.Ipc
 import org.levi.coffee.Window
 import org.levi.coffee.annotations.BindMethod
 import org.levi.coffee.annotations.BindType
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-
-val log: Logger = LoggerFactory.getLogger("Main")
+import java.io.BufferedReader
+import java.io.File
+import java.util.*
 
 @BindType
 class Person(
@@ -30,16 +29,24 @@ class Person(
     }
 }
 
+fun readHTML(filePath: String): String {
+    val bufferedReader: BufferedReader = File(filePath).bufferedReader()
+    val inputString = bufferedReader.use { it.readText() }
+    return inputString
+}
+
 fun main() {
     val win = Window()
     win.setSize(700, 700)
     win.setTitle("My first Javatron app!")
-    win.setURL("http://localhost:5173")
+
+
+    win.setURL(ClassLoader.getSystemClassLoader().getResource("dist/index.html")!!.toURI().toString())
     win.bind(
         Person(),
     )
-    win.addBeforeStartCallback { log.info("Started app...") }
-    win.addOnCloseCallback { log.info("Closed the app!") }
+    win.addBeforeStartCallback { println("Started app...") }
+    win.addOnCloseCallback { println("Closed the app!") }
 
     win.run()
 }
