@@ -1,6 +1,7 @@
 package org.levi.coffee.internal
 
 import org.levi.coffee.annotations.BindMethod
+import org.levi.coffee.annotations.BindType
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.IOException
@@ -52,6 +53,10 @@ internal object CodeGenerator {
             val classes = objects.map { it.javaClass }
             TypeConverter.boundTypes.addAll(classes.map { it.simpleName })
             for (c in classes) {
+                if (!c.isAnnotationPresent(BindType::class.java)) {
+                    continue
+                }
+
                 // Declare type and export
                 writer.println("export type ${c.simpleName} = {")
 
