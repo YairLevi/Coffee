@@ -21,15 +21,15 @@ internal object CodeGenerator {
     private val log = LoggerFactory.getLogger(this::class.java)
 
     init {
-        FileManager.createOrReplaceFile(TYPES_FILE_PATH)
-        FileManager.createOrReplaceDirectory(METHODS_FOLDER_PATH)
+        FileUtil.createOrReplaceFile(TYPES_FILE_PATH)
+        FileUtil.createOrReplaceDirectory(METHODS_FOLDER_PATH)
     }
     
     fun generateEventsAPI() {
 
         try {
-            FileManager.createOrReplaceFile(EVENTS_API_FILE_DEST)
-            FileManager.createOrReplaceFile(WINDOW_DECLARE_FILE_DEST)
+            FileUtil.createOrReplaceFile(EVENTS_API_FILE_DEST)
+            FileUtil.createOrReplaceFile(WINDOW_DECLARE_FILE_DEST)
 
             val eventsResource = this::class.java.getResource(EVENTS_API_FILE_RESOURCE)
             val windowResource = this::class.java.getResource(WINDOW_DECLARE_FILE_RESOURCE)
@@ -83,7 +83,7 @@ internal object CodeGenerator {
         try {
             val className = c.simpleName
             val path = "$METHODS_FOLDER_PATH$className.js"
-            FileManager.createOrReplaceFile(path)
+            FileUtil.createOrReplaceFile(path)
             val writer = PrintWriter(path)
 
             for (method in c.declaredMethods) {
@@ -106,7 +106,7 @@ internal object CodeGenerator {
     private fun createTypescriptDeclarations(c: Class<*>) {
         try {
             val path = "$METHODS_FOLDER_PATH${c.simpleName}.d.ts"
-            FileManager.createOrReplaceFile(path)
+            FileUtil.createOrReplaceFile(path)
             val writer = PrintWriter(path)
 
             writer.println("import * as t from '../types';\n")

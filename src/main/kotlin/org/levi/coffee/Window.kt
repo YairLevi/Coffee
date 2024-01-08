@@ -4,11 +4,17 @@ import org.levi.coffee.internal.CodeGenerator.generateEventsAPI
 import org.levi.coffee.internal.CodeGenerator.generateFunctions
 import org.levi.coffee.internal.CodeGenerator.generateTypes
 import dev.webview.Webview
+import org.levi.coffee.internal.FileUtil
 import org.levi.coffee.internal.MethodBinder
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.util.*
 import java.util.function.Consumer
+import kotlin.system.exitProcess
 
 class Window (withDevTools: Boolean = true) {
+    private val log: Logger = LoggerFactory.getLogger(this::class.java)
+
     private val _webview: Webview = Webview(withDevTools)
     private val _beforeStartCallbacks: MutableList<Runnable> = ArrayList()
     private val _onCloseCallbacks: MutableList<Runnable> = ArrayList()
@@ -23,8 +29,27 @@ class Window (withDevTools: Boolean = true) {
         _url = url
     }
 
-    fun setHTML(html: String) {
-        _url = "data:text/html,$html"
+    fun setHTMLFromResource(resourcePath: String) {
+        val resource = ClassLoader.getSystemClassLoader().getResource(resourcePath)
+        if (resource == null) {
+            log.error("Resource at $resourcePath was not found.")
+            exitProcess(1)
+        }
+        _url = resource.toURI().toString()
+    }
+
+    fun setRawHTMLFromFile(path: String, isBase64: Boolean = false) {
+        FileUtil.validateFileExists(path)
+        val content = FileUtil.readText(path)
+        setRawHTML(content, isBase64)
+    }
+
+    fun setRawHTML(html: String, isBase64: Boolean = false) {
+        _url = "data:text/html"
+        if (isBase64) {
+            _url += ";base64"
+        }
+        _url += ",$html"
     }
 
     fun setTitle(title: String) {

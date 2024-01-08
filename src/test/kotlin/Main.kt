@@ -2,10 +2,8 @@ import org.levi.coffee.Ipc
 import org.levi.coffee.Window
 import org.levi.coffee.annotations.BindMethod
 import org.levi.coffee.annotations.BindType
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-
-val log: Logger = LoggerFactory.getLogger("Main")
+import java.io.BufferedReader
+import java.io.File
 
 @BindType
 class Person(
@@ -34,12 +32,20 @@ fun main() {
     val win = Window()
     win.setSize(700, 700)
     win.setTitle("My first Javatron app!")
-    win.setURL("http://localhost:5173")
+
+    // When in development:
+    // win.setURL("http://localhost:5173")
+
+    // When in production:
+    // win.setHTMLFromResource("path/to/build/resource.html")
+
+
     win.bind(
         Person(),
     )
-    win.addBeforeStartCallback { log.info("Started app...") }
-    win.addOnCloseCallback { log.info("Closed the app!") }
+
+    win.addBeforeStartCallback { println("Started app...") }
+    win.addOnCloseCallback { println("Closed the app!") }
 
     win.run()
 }
