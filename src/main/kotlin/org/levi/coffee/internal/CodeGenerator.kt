@@ -8,7 +8,7 @@ import java.io.PrintWriter
 import kotlin.system.exitProcess
 
 internal object CodeGenerator {
-    private const val CLIENT_FOLDER_PATH = "frontend/javatron/"
+    private const val CLIENT_FOLDER_PATH = "frontend/coffee/"
     private const val METHODS_FOLDER_PATH = CLIENT_FOLDER_PATH + "methods/"
     private const val TYPES_FILE_PATH = CLIENT_FOLDER_PATH + "types.ts"
 
@@ -24,7 +24,7 @@ internal object CodeGenerator {
         FileManager.createOrReplaceFile(TYPES_FILE_PATH)
         FileManager.createOrReplaceDirectory(METHODS_FOLDER_PATH)
     }
-
+    
     fun generateEventsAPI() {
 
         try {
