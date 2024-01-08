@@ -1,12 +1,14 @@
 package org.levi.coffee.internal
 
 import org.slf4j.LoggerFactory
+import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
+import java.util.Base64
 import kotlin.system.exitProcess
 
 
-internal object FileManager {
+internal object FileUtil {
     private val log = LoggerFactory.getLogger(this::class.java)
 
     fun createOrReplaceDirectory(pathString: String) {
@@ -34,6 +36,23 @@ internal object FileManager {
             }
         } catch (e: IOException) {
             log.error("Error creating a types file for the frontend.", e)
+            exitProcess(1)
+        }
+    }
+
+    fun readText(path: String): String {
+        val bufferedReader: BufferedReader = File(path).bufferedReader()
+        return bufferedReader.use { it.readText() }
+    }
+
+    fun readBase64(path: String): String {
+        return Base64.getEncoder().encodeToString(readText(path).toByteArray())
+    }
+
+    fun validateFileExists(path: String) {
+        val file = File(path)
+        if (!file.exists()) {
+            log.error("File doesn't exist at: ${file.absolutePath}")
             exitProcess(1)
         }
     }

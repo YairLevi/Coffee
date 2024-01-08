@@ -4,7 +4,6 @@ import org.levi.coffee.annotations.BindMethod
 import org.levi.coffee.annotations.BindType
 import java.io.BufferedReader
 import java.io.File
-import java.util.*
 
 @BindType
 class Person(
@@ -29,22 +28,22 @@ class Person(
     }
 }
 
-fun readHTML(filePath: String): String {
-    val bufferedReader: BufferedReader = File(filePath).bufferedReader()
-    val inputString = bufferedReader.use { it.readText() }
-    return inputString
-}
-
 fun main() {
     val win = Window()
     win.setSize(700, 700)
     win.setTitle("My first Javatron app!")
 
+    // When in development:
+    // win.setURL("http://localhost:5173")
 
-    win.setURL(ClassLoader.getSystemClassLoader().getResource("dist/index.html")!!.toURI().toString())
+    // When in production:
+    // win.setHTMLFromResource("path/to/build/resource.html")
+
+
     win.bind(
         Person(),
     )
+
     win.addBeforeStartCallback { println("Started app...") }
     win.addOnCloseCallback { println("Closed the app!") }
 
