@@ -5,7 +5,10 @@ import org.levi.coffee.annotations.BindType
 import java.io.BufferedReader
 import java.io.File
 
-@BindType
+@BindType(
+    only = [],
+    ignore = ["age"]
+)
 class Person(
     val name: String = "",
     var age: Int = 0,

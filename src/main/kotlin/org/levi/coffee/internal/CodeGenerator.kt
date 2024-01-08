@@ -57,13 +57,15 @@ internal object CodeGenerator {
                     continue
                 }
 
+                val destructedClass = TypeConverter.getDestructedClass(c)
+
                 // Declare type and export
-                writer.println("export type ${c.simpleName} = {")
+                writer.println("export type ${destructedClass.name} = {")
 
                 // Add fields and map the types from java to typescript
-                for (field in c.declaredFields) {
+                for (field in destructedClass.fields) {
                     val name = field.name
-                    val type = TypeConverter.convert(field.genericType, false)
+                    val type = TypeConverter.convert(field.type, false)
                     writer.println("\t$name: $type")
                 }
                 writer.println("}\n")
