@@ -1,14 +1,11 @@
 package org.levi.coffee
 
-import org.levi.coffee.internal.CodeGenerator.generateEventsAPI
-import org.levi.coffee.internal.CodeGenerator.generateFunctions
-import org.levi.coffee.internal.CodeGenerator.generateTypes
 import dev.webview.Webview
+import org.levi.coffee.internal.CodeGenerator
 import org.levi.coffee.internal.FileUtil
 import org.levi.coffee.internal.MethodBinder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.util.*
 import java.util.function.Consumer
 import kotlin.system.exitProcess
 
@@ -85,9 +82,9 @@ class Window (withDevTools: Boolean = true) {
     }
 
     fun run() {
-        generateEventsAPI()
-        generateTypes(*_bindObjects.toTypedArray())
-        generateFunctions(*_bindObjects.toTypedArray())
+        CodeGenerator.generateEventsAPI()
+        CodeGenerator.generateTypes(*_bindObjects.toTypedArray())
+        CodeGenerator.generateFunctions(*_bindObjects.toTypedArray())
         MethodBinder.bind(_webview, *_bindObjects.toTypedArray())
 
         _beforeStartCallbacks.forEach(Consumer { it.run() })
