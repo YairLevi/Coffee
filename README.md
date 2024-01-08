@@ -53,7 +53,7 @@ dependencies {
 [Will be added later on. If you want, you could still download the source and build.]
 ____
 ## Example
-### Kotlin
+The code for both Java and Kotlin is pretty much the same.
 ```kotlin
 import org.levi.coffee.Ipc
 import org.levi.coffee.Window
@@ -96,5 +96,3 @@ fun main() {
 }
 
 ```
-### Java
-[Will be added later on.]
