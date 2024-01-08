@@ -1,22 +1,26 @@
-import "./window"
+interface IPC {
+  events: {
+    [event: string]: {
+      handler: () => void
+      callbacks: (() => void)[]
+    }
+  }
+  on: (event: string, callback: () => void) => void
+}
 
-window.ipc = {}
-
-export function addListener(event: string, callback: () => void) {
-  if (window.ipc[event]) {
-    window.ipc[event].callbacks.push(callback)
+function on(event: string, callback: () => void) {
+  if (ipc[event]) {
+    ipc[event].callbacks.push(callback)
     return
   }
 
-  window.ipc[event] = {
-    handler: () => window.ipc[event].callbacks.forEach(cb => cb()),
+  ipc.events[event] = {
+    handler: () => ipc.events[event].callbacks.forEach(cb => cb()),
     callbacks: [callback],
   }
 }
 
-export function removeListener(event: string, callback: () => void) {
-  if (!window[event]) {
-    return
-  }
-  window.ipc[event].callbacks = window.ipc[event].callbacks.filter(cb => cb != callback)
+export const ipc: IPC = {
+  on: on,
+  events: {},
 }

@@ -5,7 +5,6 @@ import org.levi.coffee.annotations.BindType
 import java.io.BufferedReader
 import java.io.File
 
-@BindType
 class Person(
     val name: String = "",
     var age: Int = 0,
@@ -13,13 +12,10 @@ class Person(
     val string: Map<Person, List<Person>> = emptyMap(),
 ) {
 
-
-    @BindMethod
     fun addTwoNumbers(a: Int, b: Int): Int {
         return a + b;
     }
 
-    @BindMethod
     fun incrementAndPrint() {
         age++;
         println("My age increased to $age")
@@ -33,13 +29,7 @@ fun main() {
     win.setSize(700, 700)
     win.setTitle("My first Javatron app!")
 
-    // When in development:
-    // win.setURL("http://localhost:5173")
-
-    // When in production:
-    // win.setHTMLFromResource("path/to/build/resource.html")
-
-
+    win.setURL("http://localhost:5173")
     win.bind(
         Person(),
     )
