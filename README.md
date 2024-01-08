@@ -27,14 +27,14 @@ Add to `pom.xml`:
     <dependency>
         <groupId>com.github.YairLevi</groupId>
         <artifactId>Coffee</artifactId>
-        <version>0.0.1</version>
+        <version>0.1.1</version>
     </dependency>
 </dependencies>
 ```
 **2. Gradle** 
 
 Add it in your root build.gradle at the end of repositories:
-```
+```groovy
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -44,9 +44,9 @@ dependencyResolutionManagement {
 }
 ```
 Add dependency
-```agsl
+```groovy
 dependencies {
-	implementation 'com.github.YairLevi:Coffee2:Tag'
+	implementation 'com.github.YairLevi:Coffee2:0.1.1'
 }
 ```
 3. JAR
