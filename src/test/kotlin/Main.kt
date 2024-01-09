@@ -1,22 +1,21 @@
 import com.google.gson.Gson
 import org.levi.coffee.Ipc
 import org.levi.coffee.Window
+import org.levi.coffee.annotations.BindAllMethods
 import org.levi.coffee.annotations.BindMethod
 import org.levi.coffee.annotations.BindType
+import org.levi.coffee.annotations.IgnoreMethod
 import java.io.BufferedReader
 import java.io.File
 
-@BindType(
-    only = [],
-    ignore = ["age"],
-)
+@BindType(ignore = ["age"])
 class Person(
     val name: String = "",
     var age: Int = 0,
     val hobbies: List<String> = emptyList(),
     val string: Map<Person, List<Person>> = emptyMap(),
 ) {
-
+    @BindMethod
     fun addTwoNumbers(a: Int, b: Int): Int {
         return a + b;
     }
@@ -30,24 +29,17 @@ class Person(
 }
 
 fun main() {
-    val g = Gson()
-    val json = """{"name":"Yair"}"""
-    val p = g.fromJson(json, Person::class.java)
-    println(p.age)
-    println(p.name)
-    println(p.hobbies)
-    println(p.string)
-//    val win = Window()
-//    win.setSize(700, 700)
-//    win.setTitle("My first Javatron app!")
-//
-//    win.setURL("http://localhost:5173")
-//    win.bind(
-//        Person(),
-//    )
-//
-//    win.addBeforeStartCallback { println("Started app...") }
-//    win.addOnCloseCallback { println("Closed the app!") }
-//
-//    win.run()
+    val win = Window()
+    win.setSize(700, 700)
+    win.setTitle("My first Javatron app!")
+
+    win.setURL("http://localhost:5173")
+    win.bind(
+        Person(),
+    )
+
+    win.addBeforeStartCallback { println("Started app...") }
+    win.addOnCloseCallback { println("Closed the app!") }
+
+    win.run()
 }

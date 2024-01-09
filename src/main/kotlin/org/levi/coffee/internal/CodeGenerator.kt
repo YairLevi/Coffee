@@ -37,22 +37,22 @@ internal object CodeGenerator {
     fun generateTypes(vararg objects: Any) {
         try {
             val writer = PrintWriter(TYPES_FILE_PATH)
-            val classes = objects.map { it.javaClass }
+            val classes = objects.map { it::class.java }
             TypeConverter.boundTypes.addAll(classes.map { it.simpleName })
             for (c in classes) {
                 if (!c.isAnnotationPresent(BindType::class.java)) {
                     continue
                 }
 
-                val destructedClass = TypeConverter.getDestructedClass(c)
+                val fieldsToBind = BindFilter.fieldsOf(c)
 
                 // Declare type and export
-                writer.println("export type ${destructedClass.name} = {")
+                writer.println("export type ${c.simpleName} = {")
 
                 // Add fields and map the types from java to typescript
-                for (field in destructedClass.fields) {
+                for (field in fieldsToBind) {
                     val name = field.name
-                    val type = TypeConverter.convert(field.type, false)
+                    val type = TypeConverter.convert(field.genericType, false)
                     writer.println("\t$name: $type")
                 }
                 writer.println("}\n")
@@ -68,7 +68,7 @@ internal object CodeGenerator {
 
     fun generateFunctions(vararg objects: Any) {
         for (c in objects.map { it.javaClass }) {
-            val methodCount = c.declaredMethods.filter { it.isAnnotationPresent(BindMethod::class.java) }.size
+            val methodCount = BindFilter.methodsOf(c).size
             if (methodCount == 0) {
                 continue
             }
@@ -84,9 +84,9 @@ internal object CodeGenerator {
             FileUtil.createOrReplaceFile(path)
             val writer = PrintWriter(path)
 
-            for (method in c.declaredMethods) {
-                if (!method.isAnnotationPresent(BindMethod::class.java)) continue
+            val methodsToBind = BindFilter.methodsOf(c)
 
+            for (method in methodsToBind) {
                 val methodName = method.name
                 val argsString = method.parameters.joinToString(",") { it.name }
                 writer.println("export function $methodName($argsString) {")
@@ -107,13 +107,11 @@ internal object CodeGenerator {
             FileUtil.createOrReplaceFile(path)
             val writer = PrintWriter(path)
 
+            val methodsToBind = BindFilter.methodsOf(c)
+
             writer.println("import * as t from '../types';\n")
 
-            for (method in c.declaredMethods.sortedBy { it.name }) {
-                if (!method.isAnnotationPresent(BindMethod::class.java)) {
-                    continue
-                }
-
+            for (method in methodsToBind) {
                 val argsString = method.parameters.joinToString(", ") {
                     "${it.name}: ${TypeConverter.convert(it.parameterizedType, true)}"
                 }

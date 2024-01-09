@@ -1,5 +1,8 @@
 package org.levi.coffee.annotations
 
+/**
+ * Specify a class to convert to a typescript type on the frontend.
+ */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 annotation class BindType(

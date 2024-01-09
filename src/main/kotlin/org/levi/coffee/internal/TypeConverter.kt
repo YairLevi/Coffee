@@ -1,21 +1,8 @@
 package org.levi.coffee.internal
 
-import org.levi.coffee.annotations.BindType
 import org.slf4j.LoggerFactory
 import java.lang.reflect.Type
-import java.util.*
 import java.util.regex.Pattern
-import kotlin.collections.ArrayList
-
-internal class DestructedField(
-    val name: String,
-    val type: Type,
-)
-
-internal class DestructedClass(
-    val name: String,
-    val fields: List<DestructedField>
-)
 
 internal object TypeConverter {
     val boundTypes: MutableSet<String> = HashSet()
@@ -69,9 +56,13 @@ internal object TypeConverter {
         val pattern = Pattern.compile("[a-zA-Z0-9]+")
         val matcher = pattern.matcher(type)
 
-        // Each type found, swap for the corresponding type in Typescript
+        val types = HashSet<String>()
         while (matcher.find()) {
-            val javaType = matcher.group()
+            types.add(matcher.group())
+        }
+
+        // Each type found, swap for the corresponding type in Typescript
+        for (javaType in types) {
             if (!jsTypes.containsKey(javaType) && !boundTypes.contains(javaType)) {
                 log.error(
                     "java type $javaType is not recognized. Did you forget to @BindType ?\n" +
@@ -85,30 +76,5 @@ internal object TypeConverter {
             }
         }
         return type
-    }
-
-    /**
-     * Assuming @BindType annotation is present.
-     */
-    fun getDestructedClass(c: Class<*>): DestructedClass {
-        // check if "only" is present. if so, take only the fields specified.
-        // if not, check if "ignore" is present. take only the fields NOT specified.
-        val annotation = c.getAnnotation(BindType::class.java)
-
-        val fields: List<DestructedField> =
-            if (annotation.only.isNotEmpty()) {
-                c.declaredFields
-                    .filter { annotation.only.contains(it.name) }
-                    .map { DestructedField(it.name, it.genericType) }
-            } else {
-                c.declaredFields
-                    .filter { !annotation.ignore.contains(it.name) }
-                    .map { DestructedField(it.name, it.genericType) }
-            }
-
-        return DestructedClass(
-            name = c.simpleName,
-            fields = fields
-        )
     }
 }
