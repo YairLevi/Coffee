@@ -2,7 +2,6 @@ package org.levi.coffee.internal
 
 import org.slf4j.LoggerFactory
 import java.lang.reflect.Type
-import java.util.*
 import java.util.regex.Pattern
 
 internal object TypeConverter {
@@ -57,12 +56,18 @@ internal object TypeConverter {
         val pattern = Pattern.compile("[a-zA-Z0-9]+")
         val matcher = pattern.matcher(type)
 
-        // Each type found, swap for the corresponding type in Typescript
+        val types = HashSet<String>()
         while (matcher.find()) {
-            val javaType = matcher.group()
+            types.add(matcher.group())
+        }
+
+        // Each type found, swap for the corresponding type in Typescript
+        for (javaType in types) {
             if (!jsTypes.containsKey(javaType) && !boundTypes.contains(javaType)) {
-                log.error("java type $javaType is not recognized. Did you forget to @BindType ?\n" +
-                    "Used 'any' instead, just in case.")
+                log.error(
+                    "java type $javaType is not recognized. Did you forget to @BindType ?\n" +
+                        "Used 'any' instead, just in case."
+                )
                 type = type.replace(javaType, jsTypes.getOrDefault(javaType, "any"))
             } else if (!jsTypes.containsKey(javaType) && addTypePrefix) {
                 type = type.replace(javaType, "t.$javaType")
