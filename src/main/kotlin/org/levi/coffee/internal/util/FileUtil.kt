@@ -1,12 +1,10 @@
-package org.levi.coffee.internal
+package org.levi.coffee.internal.util
 
 import org.slf4j.LoggerFactory
 import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
-import java.util.Base64
 import kotlin.system.exitProcess
-
 
 internal object FileUtil {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -43,10 +41,6 @@ internal object FileUtil {
     fun readText(path: String): String {
         val bufferedReader: BufferedReader = File(path).bufferedReader()
         return bufferedReader.use { it.readText() }
-    }
-
-    fun readBase64(path: String): String {
-        return Base64.getEncoder().encodeToString(readText(path).toByteArray())
     }
 
     fun validateFileExists(path: String) {

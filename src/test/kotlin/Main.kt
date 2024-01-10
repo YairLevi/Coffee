@@ -1,12 +1,7 @@
-import com.google.gson.Gson
 import org.levi.coffee.Ipc
 import org.levi.coffee.Window
-import org.levi.coffee.annotations.BindAllMethods
 import org.levi.coffee.annotations.BindMethod
 import org.levi.coffee.annotations.BindType
-import org.levi.coffee.annotations.IgnoreMethod
-import java.io.BufferedReader
-import java.io.File
 
 @BindType(ignore = ["age"])
 class Person(

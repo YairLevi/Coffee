@@ -1,6 +1,5 @@
 package org.levi.coffee.internal
 
-import org.levi.coffee.annotations.BindMethod
 import com.google.gson.Gson
 import com.google.gson.JsonParser
 import dev.webview.Webview
@@ -13,24 +12,15 @@ internal object MethodBinder {
 
     fun bind(wv: Webview, vararg objects: Any) {
         for (obj in objects) {
-            val handlers = createHandlers(obj)
-            for (h in handlers) {
-                wv.bind(h.name, WebviewCallbackWrapper.wrap(h))
-            }
+            BindFilter.methodsOf(obj::class.java)
+                .map { createHandler(obj, it) }
+                .forEach { wv.bind(it.name, WebviewCallbackWrapper.wrap(it)) }
         }
-    }
-
-    private fun createHandlers(obj: Any): List<Handler> {
-        return obj::class.java.declaredMethods
-            .filter { it.isAnnotationPresent(BindMethod::class.java) }
-            .map { createHandler(obj, it) }
     }
 
     private fun createHandler(obj: Any, method: Method): Handler {
         val name = obj.javaClass.simpleName + "_" + method.name
-        return Handler(
-            name
-        ) { jsonArgs: String ->
+        val callback = { jsonArgs: String ->
             val jsonElements = splitArrayToJsonElements(jsonArgs)
             val params = method.parameters
             val properParams: MutableList<Any> = ArrayList()
@@ -48,6 +38,7 @@ internal object MethodBinder {
                 null
             }
         }
+        return Handler(name, callback)
     }
 
     private fun splitArrayToJsonElements(jsonString: String): List<String> {

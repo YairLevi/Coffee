@@ -1,7 +1,7 @@
 package org.levi.coffee.internal
 
-import org.levi.coffee.annotations.BindMethod
 import org.levi.coffee.annotations.BindType
+import org.levi.coffee.internal.util.FileUtil
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.IOException
@@ -72,6 +72,7 @@ internal object CodeGenerator {
             if (methodCount == 0) {
                 continue
             }
+
             createJavascriptFunctions(c)
             createTypescriptDeclarations(c)
         }

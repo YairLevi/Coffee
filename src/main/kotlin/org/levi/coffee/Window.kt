@@ -2,10 +2,11 @@ package org.levi.coffee
 
 import dev.webview.Webview
 import org.levi.coffee.internal.CodeGenerator
-import org.levi.coffee.internal.FileUtil
+import org.levi.coffee.internal.util.FileUtil
 import org.levi.coffee.internal.MethodBinder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.util.Base64
 import java.util.function.Consumer
 import kotlin.system.exitProcess
 
@@ -44,9 +45,10 @@ class Window (withDevTools: Boolean = true) {
     fun setRawHTML(html: String, isBase64: Boolean = false) {
         _url = "data:text/html"
         if (isBase64) {
-            _url += ";base64"
+            _url += ";base64,${Base64.getEncoder().encodeToString(html.toByteArray())}"
+        } else {
+            _url += ",$html"
         }
-        _url += ",$html"
     }
 
     fun setTitle(title: String) {
