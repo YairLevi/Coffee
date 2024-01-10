@@ -19,7 +19,7 @@ internal object CodeGenerator {
     private const val EVENTS_API_FILE_DEST = CLIENT_FOLDER_PATH + "events.ts"
 
     init {
-        FileUtil.createOrReplaceFile(CLIENT_FOLDER_PATH)
+        FileUtil.createOrReplaceDirectory(CLIENT_FOLDER_PATH)
         FileUtil.createOrReplaceFile(TYPES_FILE_PATH)
         FileUtil.createOrReplaceDirectory(METHODS_FOLDER_PATH)
     }

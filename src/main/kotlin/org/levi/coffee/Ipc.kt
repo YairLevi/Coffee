@@ -15,9 +15,10 @@ object Ipc {
 
     fun invoke(event: String, vararg args: Any?) {
         try {
-            val argsJson = gson.toJson(args)
-            val argsString = argsJson.substring(1, argsJson.length - 1)
-            webview.eval("window.ipc['$event'].handler($argsString)")
+            webview.eval("window.ipc.events['$event'].handler()")
+//            val argsJson = gson.toJson(args)
+//            val argsString = argsJson.substring(1, argsJson.length - 1)
+//            webview.eval("window.ipc['$event'].handler($argsString)")
         } catch (e: Exception) {
             log.error("Failed to invoke event $event")
         }
