@@ -1,26 +1,43 @@
-interface IPC {
-  events: {
-    [event: string]: {
-      handler: () => void
-      callbacks: (() => void)[]
+type IpcEventSet = {
+  [event: string]: {
+    callbacks: (() => void)[]
+    handler: () => void,
+  }
+}
+
+class Ipc {
+  private events: IpcEventSet
+
+  addHandler(event: string, callback: () => void) {
+    if (!this.events[event]) {
+      this.events[event] = {
+        callbacks: [],
+        handler: () => {
+          if (this.events[event]) {
+            this.events[event].callbacks.forEach(cb => cb())
+          }
+        }
+      }
     }
-  }
-  on: (event: string, callback: () => void) => void
-}
 
-function on(event: string, callback: () => void) {
-  if (ipc[event]) {
-    ipc[event].callbacks.push(callback)
-    return
+    this.events[event].callbacks.push(callback)
   }
 
-  ipc.events[event] = {
-    handler: () => ipc.events[event].callbacks.forEach(cb => cb()),
-    callbacks: [callback],
+  removeHandler(event: string, callback: () => void) {
+    if (!this.events[event]) {
+      return
+    }
+
+    this.events[event].callbacks = this.events[event].callbacks.filter(cb => cb != callback)
+  }
+
+  clearHandlers(event: string) {
+    if (!this.events[event]) {
+      return
+    }
+
+    this.events[event].callbacks = []
   }
 }
 
-export const ipc: IPC = {
-  on: on,
-  events: {},
-}
+export const ipc = new Ipc()
