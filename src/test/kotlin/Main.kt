@@ -15,10 +15,11 @@ class Person(
         return a + b;
     }
 
+    @BindMethod
     fun incrementAndPrint() {
-        age++;
-        println("My age increased to $age")
-        println("invoking event...")
+//        age++;
+//        println("My age increased to $age")
+//        println("invoking event...")
         Ipc.invoke("event")
     }
 }

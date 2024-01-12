@@ -15,23 +15,24 @@ internal object CodeGenerator {
     private const val METHODS_FOLDER_PATH = CLIENT_FOLDER_PATH + "methods/"
     private const val TYPES_FILE_PATH = CLIENT_FOLDER_PATH + "types.ts"
 
-    private const val EVENTS_API_FILE_RESOURCE = "/events.ts"
-    private const val EVENTS_API_FILE_DEST = CLIENT_FOLDER_PATH + "events.ts"
+    private val ipcResources = listOf("events.ts", "window.ts")
 
     init {
-        FileUtil.createOrReplaceFile(CLIENT_FOLDER_PATH)
+        FileUtil.createOrReplaceDirectory(CLIENT_FOLDER_PATH)
         FileUtil.createOrReplaceFile(TYPES_FILE_PATH)
         FileUtil.createOrReplaceDirectory(METHODS_FOLDER_PATH)
     }
     
     fun generateEventsAPI() {
-        FileUtil.createOrReplaceFile(EVENTS_API_FILE_DEST)
+        for (resource in ipcResources) {
+            FileUtil.createOrReplaceFile(CLIENT_FOLDER_PATH + resource)
 
-        val eventsResource = this::class.java.getResource(EVENTS_API_FILE_RESOURCE)
-            ?: throw Exception("Failed to find $EVENTS_API_FILE_RESOURCE in resources.")
+            val eventsResource = this::class.java.getResource("/$resource")
+                ?: throw Exception("Failed to find $resource in resources.")
 
-        File(EVENTS_API_FILE_DEST).printWriter().use { out -> out.println(eventsResource.readText()) }
-        log.info("Created events API files.")
+            File(CLIENT_FOLDER_PATH + resource).printWriter().use { out -> out.println(eventsResource.readText()) }
+            log.info("Created events API files.")
+        }
     }
 
     fun generateTypes(vararg objects: Any) {
