@@ -6,11 +6,14 @@ import org.levi.coffee.internal.util.FileUtil
 import org.levi.coffee.internal.MethodBinder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import spark.Spark.staticFiles
+import spark.Spark.init
+import spark.Spark.stop
 import java.util.Base64
 import java.util.function.Consumer
 import kotlin.system.exitProcess
 
-class Window (withDevTools: Boolean = true) {
+class Window (withDevTools: Boolean = true, val isDev: Boolean = false) {
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
     private val _webview: Webview = Webview(withDevTools)
@@ -91,8 +94,18 @@ class Window (withDevTools: Boolean = true) {
 
         _beforeStartCallbacks.forEach(Consumer { it.run() })
         Ipc.setWebview(_webview)
-        _webview.loadURL(_url)
+
+        if (isDev) {
+            _webview.loadURL(_url)
+        }
+        else {
+            staticFiles.location("/dist")
+            _webview.loadURL("http://localhost:4567")
+            init()
+        }
+
         _webview.run()
+        stop()
         _onCloseCallbacks.forEach(Consumer { it.run() })
         _webview.close()
     }
