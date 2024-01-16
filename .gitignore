@@ -41,7 +41,7 @@ build/
 
 ## FRONT END STUFF ##
 ./frontend/node_modules/
-frontend
+
 
 ## TESTS ##
 src/main/kotlin/Main.kt
