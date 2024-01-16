@@ -8,22 +8,32 @@ import java.io.IOException
 import java.io.PrintWriter
 import kotlin.system.exitProcess
 
-internal object CodeGenerator {
+internal class CodeGenerator {
     private val log = LoggerFactory.getLogger(this::class.java)
 
-    private const val CLIENT_FOLDER_PATH = "frontend/coffee/"
-    private const val METHODS_FOLDER_PATH = CLIENT_FOLDER_PATH + "methods/"
-    private const val TYPES_FILE_PATH = CLIENT_FOLDER_PATH + "types.ts"
+    private val CLIENT_FOLDER_PATH = "frontend/coffee/"
+    private val METHODS_FOLDER_PATH = CLIENT_FOLDER_PATH + "methods/"
+    private val TYPES_FILE_PATH = CLIENT_FOLDER_PATH + "types.ts"
 
     private val ipcResources = listOf("events.ts", "window.ts")
 
-    init {
+//    // IS THIS THE CULPRIT???
+//    init {
+//        FileUtil.createOrReplaceDirectory(CLIENT_FOLDER_PATH)
+//        FileUtil.createOrReplaceFile(TYPES_FILE_PATH)
+//        FileUtil.createOrReplaceDirectory(METHODS_FOLDER_PATH)
+//    }
+
+    fun generate(vararg objects: Any) {
         FileUtil.createOrReplaceDirectory(CLIENT_FOLDER_PATH)
         FileUtil.createOrReplaceFile(TYPES_FILE_PATH)
         FileUtil.createOrReplaceDirectory(METHODS_FOLDER_PATH)
+        generateEventsAPI()
+        generateFunctions(objects)
+        generateTypes(objects)
     }
     
-    fun generateEventsAPI() {
+    private fun generateEventsAPI() {
         for (resource in ipcResources) {
             FileUtil.createOrReplaceFile(CLIENT_FOLDER_PATH + resource)
 
@@ -35,7 +45,7 @@ internal object CodeGenerator {
         }
     }
 
-    fun generateTypes(vararg objects: Any) {
+    private fun generateTypes(vararg objects: Any) {
         try {
             val writer = PrintWriter(TYPES_FILE_PATH)
             val classes = objects.map { it::class.java }
@@ -67,7 +77,7 @@ internal object CodeGenerator {
         }
     }
 
-    fun generateFunctions(vararg objects: Any) {
+    private fun generateFunctions(vararg objects: Any) {
         for (c in objects.map { it.javaClass }) {
             val methodCount = BindFilter.methodsOf(c).size
             if (methodCount == 0) {

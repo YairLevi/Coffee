@@ -1,5 +1,9 @@
 package org.levi.coffee
 
+
+import co.casterlabs.rakurai.json.element.JsonArray
+import co.casterlabs.rakurai.json.element.JsonElement
+import dev.webview.ConsumingProducer
 import dev.webview.Webview
 import org.levi.coffee.internal.CodeGenerator
 import org.levi.coffee.internal.MethodBinder
@@ -13,6 +17,7 @@ import kotlin.system.exitProcess
 class Window(dev: Boolean = true) {
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
+//    private val generator: CodeGenerator
     private val _webview: Webview = Webview(dev)
     private val _beforeStartCallbacks: MutableList<Runnable> = ArrayList()
     private val _onCloseCallbacks: MutableList<Runnable> = ArrayList()
@@ -21,6 +26,7 @@ class Window(dev: Boolean = true) {
 
     init {
         setSize(800, 600)
+//        generator = CodeGenerator()
     }
 
     fun setURL(url: String) {
@@ -71,8 +77,12 @@ class Window(dev: Boolean = true) {
         _webview.setFixedSize(fixedWidth, fixedHeight)
     }
 
+    fun bindSingle(name: String, func: ConsumingProducer<JsonArray, JsonElement>) {
+        _webview.bind(name, func)
+    }
+
     fun bind(vararg objects: Any) {
-        _bindObjects.addAll(objects)
+        MethodBinder.bind(_webview, *objects)
     }
 
     fun addBeforeStartCallback(r: Runnable) {
@@ -85,13 +95,10 @@ class Window(dev: Boolean = true) {
 
 
     fun run() {
-        CodeGenerator.generateEventsAPI()
-        CodeGenerator.generateTypes(*_bindObjects.toTypedArray())
-        CodeGenerator.generateFunctions(*_bindObjects.toTypedArray())
+//        generator.generate(*_bindObjects.toTypedArray())
         MethodBinder.bind(_webview, *_bindObjects.toTypedArray())
-
-        _beforeStartCallbacks.forEach(Consumer { it.run() })
         Ipc.setWebview(_webview)
+        _beforeStartCallbacks.forEach(Consumer { it.run() })
 
         _webview.loadURL(_url)
         _webview.run()
