@@ -1,6 +1,11 @@
 package org.levi.coffee
 
+
 import dev.webview.Webview
+import io.ktor.server.engine.*
+import io.ktor.server.http.content.*
+import io.ktor.server.netty.*
+import io.ktor.server.routing.*
 import org.levi.coffee.internal.CodeGenerator
 import org.levi.coffee.internal.MethodBinder
 import org.levi.coffee.internal.util.FileUtil
@@ -10,13 +15,13 @@ import java.util.*
 import java.util.function.Consumer
 import kotlin.system.exitProcess
 
-class Window(dev: Boolean = true) {
+class Window(val dev: Boolean = true) {
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
-    private val _webview: Webview = Webview(dev)
+    private val _webview: Webview = Webview(true)
     private val _beforeStartCallbacks: MutableList<Runnable> = ArrayList()
     private val _onCloseCallbacks: MutableList<Runnable> = ArrayList()
-    private val _bindObjects: MutableList<Any> = ArrayList()
+    private val _bindObjects = ArrayList<Any>()
     private var _url: String = ""
 
     init {
@@ -72,7 +77,9 @@ class Window(dev: Boolean = true) {
     }
 
     fun bind(vararg objects: Any) {
-        _bindObjects.addAll(objects)
+        for (o in objects) {
+            _bindObjects.add(o)
+        }
     }
 
     fun addBeforeStartCallback(r: Runnable) {
@@ -85,18 +92,39 @@ class Window(dev: Boolean = true) {
 
 
     fun run() {
-        CodeGenerator.generateEventsAPI()
-        CodeGenerator.generateTypes(*_bindObjects.toTypedArray())
-        CodeGenerator.generateFunctions(*_bindObjects.toTypedArray())
-        MethodBinder.bind(_webview, *_bindObjects.toTypedArray())
+        if (dev) {
+            val cg = CodeGenerator()
+            cg.generateTypes(*_bindObjects.toTypedArray())
+            cg.generateFunctions(*_bindObjects.toTypedArray())
+            cg.generateEventsAPI()
+        }
 
-        _beforeStartCallbacks.forEach(Consumer { it.run() })
+        var server: NettyApplicationEngine? = null
+        if (!dev) {
+            val prodPort = 4567
+            server = embeddedServer(Netty, port = prodPort, host = "localhost") {
+                routing {
+                    staticResources("/", "dist") {
+                        default("index.html")
+                        preCompressed(CompressedFileType.GZIP)
+                    }
+                }
+            }
+            server.start()
+            _url = "http://localhost:$prodPort"
+        }
+
+        MethodBinder.bind(_webview, *_bindObjects.toTypedArray())
         Ipc.setWebview(_webview)
+        _beforeStartCallbacks.forEach(Consumer { it.run() })
 
         _webview.loadURL(_url)
         _webview.run()
 
         _onCloseCallbacks.forEach(Consumer { it.run() })
         _webview.close()
+
+        server?.stop()
+
     }
 }

@@ -8,12 +8,12 @@ import java.io.IOException
 import java.io.PrintWriter
 import kotlin.system.exitProcess
 
-internal object CodeGenerator {
+internal class CodeGenerator {
     private val log = LoggerFactory.getLogger(this::class.java)
 
-    private const val CLIENT_FOLDER_PATH = "frontend/coffee/"
-    private const val METHODS_FOLDER_PATH = CLIENT_FOLDER_PATH + "methods/"
-    private const val TYPES_FILE_PATH = CLIENT_FOLDER_PATH + "types.ts"
+    private val CLIENT_FOLDER_PATH = "frontend/coffee/"
+    private val METHODS_FOLDER_PATH = CLIENT_FOLDER_PATH + "methods/"
+    private val TYPES_FILE_PATH = CLIENT_FOLDER_PATH + "types.ts"
 
     private val ipcResources = listOf("events.ts", "window.ts")
 
@@ -22,7 +22,7 @@ internal object CodeGenerator {
         FileUtil.createOrReplaceFile(TYPES_FILE_PATH)
         FileUtil.createOrReplaceDirectory(METHODS_FOLDER_PATH)
     }
-    
+
     fun generateEventsAPI() {
         for (resource in ipcResources) {
             FileUtil.createOrReplaceFile(CLIENT_FOLDER_PATH + resource)
@@ -31,8 +31,8 @@ internal object CodeGenerator {
                 ?: throw Exception("Failed to find $resource in resources.")
 
             File(CLIENT_FOLDER_PATH + resource).printWriter().use { out -> out.println(eventsResource.readText()) }
-            log.info("Created events API files.")
         }
+        log.info("Created events API files.")
     }
 
     fun generateTypes(vararg objects: Any) {
