@@ -27,7 +27,7 @@ Add to `pom.xml`:
     <dependency>
         <groupId>com.github.YairLevi</groupId>
         <artifactId>Coffee</artifactId>
-        <version>0.1.1</version>
+        <version>latest_version</version>
     </dependency>
 </dependencies>
 ```
