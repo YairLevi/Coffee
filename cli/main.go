@@ -9,19 +9,22 @@ import (
 //go:embed templates/*
 var content embed.FS
 
+func perform(f func() error) {
+	if err := f(); err != nil {
+		panic(err)
+	}
+}
+
 func main() {
-	invoked := os.Args[1]
+	cmd := os.Args[1]
 
-	switch invoked {
+	switch cmd {
 	case command.INIT:
-		{
-			if err := Init(); err != nil {
-				panic(err)
-			}
-		}
-
-		// TODO: implement other commands.
+		perform(Init)
+		break
 	case command.DEV:
+		perform(Dev)
+		break
 	case command.BUILD:
 	default:
 		panic("invalid usage. proper usage is: coffee <command> <backend-template> <frontend-template>")
