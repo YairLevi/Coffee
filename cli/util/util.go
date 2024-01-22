@@ -1,16 +1,13 @@
-package command
+package util
 
 import (
 	"fmt"
 	"io"
+	"net"
 	"os"
 	"os/exec"
 	"path/filepath"
 )
-
-const INIT = "init"
-const DEV = "dev"
-const BUILD = "build"
 
 func StopProcessTree(pid int) error {
 	cmd := exec.Command("taskkill", "/F", "/T", "/PID", fmt.Sprint(pid))
@@ -22,6 +19,20 @@ func CommandWithLog(cmd string, args ...string) *exec.Cmd {
 	c.Stderr = os.Stderr
 	c.Stdout = os.Stdout
 	return c
+}
+
+func GetFreePort() (int, error) {
+	addr, err := net.ResolveTCPAddr("tcp", "localhost:0")
+	if err != nil {
+		return 0, err
+	}
+
+	l, err := net.ListenTCP("tcp", addr)
+	if err != nil {
+		return 0, err
+	}
+	defer l.Close()
+	return l.Addr().(*net.TCPAddr).Port, nil
 }
 
 func PrintFilePaths(folderPath string) error {

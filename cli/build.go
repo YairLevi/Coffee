@@ -1,7 +1,7 @@
 package main
 
 import (
-	"cli/command"
+	"cli/util"
 	"fmt"
 	"os"
 )
@@ -13,7 +13,7 @@ func Build() error {
 		return err
 	}
 
-	buildFront := command.CommandWithLog("npm", "run", "build")
+	buildFront := util.CommandWithLog("npm", "run", "build")
 	err = buildFront.Run()
 	if err != nil {
 		fmt.Println(err.Error())
@@ -26,13 +26,13 @@ func Build() error {
 		return err
 	}
 
-	err = command.MoveDirectory("frontend/dist", "src/main/resources/dist")
+	err = util.MoveDirectory("frontend/dist", "src/main/resources/dist")
 	if err != nil {
 		fmt.Println(err.Error())
 		return err
 	}
 
-	buildApp := command.CommandWithLog("mvn", "clean", "compile", "assembly:single")
+	buildApp := util.CommandWithLog("mvn", "clean", "compile", "assembly:single")
 	err = buildApp.Run()
 	if err != nil {
 		fmt.Println(err.Error())

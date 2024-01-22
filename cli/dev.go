@@ -1,7 +1,7 @@
 package main
 
 import (
-	"cli/command"
+	"cli/util"
 	"fmt"
 	"log"
 	"os"
@@ -54,7 +54,7 @@ func Dev() error {
 	}
 
 	log.Println("Shuting down frontend dev server")
-	err = command.StopProcessTree(devServer.Process.Pid)
+	err = util.StopProcessTree(devServer.Process.Pid)
 	if err != nil {
 		return fmt.Errorf("Failed to close the entire process tree of the dev server.\n%v", err)
 	}

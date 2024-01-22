@@ -45,3 +45,4 @@ frontend
 
 ## TESTS ##
 src/main/kotlin/Main.kt
+cli/cli.exe

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"cli/command"
 	"embed"
 	"os"
 )
@@ -15,17 +14,21 @@ func perform(f func() error) {
 	}
 }
 
+const INIT = "init"
+const DEV = "dev"
+const BUILD = "build"
+
 func main() {
 	cmd := os.Args[1]
 	switch cmd {
-	case command.INIT:
+	case INIT:
 		perform(Init)
-	case command.DEV:
+	case DEV:
 		perform(Dev)
-	case command.BUILD:
+	case BUILD:
 		perform(Build)
 	default:
-		panic("invalid usage. proper usage is: coffee <command> <backend-template> <frontend-template>")
+		panic("invalid usage. proper usage is: coffee <util> <backend-template> <frontend-template>")
 		// TODO: add option to print out all available templates.
 	}
 }

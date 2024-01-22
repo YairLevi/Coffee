@@ -28,7 +28,7 @@ func Init() error {
 	backExists, err := SubdirectoryExists(backendTemplatePath + backend)
 	uiExists, err := SubdirectoryExists(uiTemplatePath + ui)
 	if err != nil {
-		return fmt.Errorf("init command unexpected error: %v", err)
+		return fmt.Errorf("init util unexpected error: %v", err)
 	}
 
 	if !backExists {
