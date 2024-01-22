@@ -46,6 +46,11 @@ func Init() error {
 	if err != nil {
 		return fmt.Errorf("creating frontend files error: %v", err.Error())
 	}
+	// err = os.Rename("gitignore", ".gitignore")
+	// err = os.Rename("frontend/gitignore", "frontend/.gitignore")
+	if err != nil {
+		return fmt.Errorf("failed to rename file: %v", err)
+	}
 
 	return nil
 }

@@ -17,15 +17,13 @@ func perform(f func() error) {
 
 func main() {
 	cmd := os.Args[1]
-
 	switch cmd {
 	case command.INIT:
 		perform(Init)
-		break
 	case command.DEV:
 		perform(Dev)
-		break
 	case command.BUILD:
+		perform(Build)
 	default:
 		panic("invalid usage. proper usage is: coffee <command> <backend-template> <frontend-template>")
 		// TODO: add option to print out all available templates.
