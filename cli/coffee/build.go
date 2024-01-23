@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/YairLevi/Coffee/cli/util"
+	"github.com/YairLevi/Coffee/cli/coffee/util"
 	"github.com/charmbracelet/log"
 	"os"
 )

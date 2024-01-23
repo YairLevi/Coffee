@@ -1,4 +1,4 @@
-module github.com/YairLevi/Coffee/cli
+module github.com/YairLevi/Coffee/cli/coffee
 
 go 1.20
 
