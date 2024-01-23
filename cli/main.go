@@ -2,6 +2,8 @@ package main
 
 import (
 	"embed"
+	"fmt"
+	"github.com/charmbracelet/log"
 	"os"
 )
 
@@ -10,7 +12,8 @@ var content embed.FS
 
 func perform(f func() error) {
 	if err := f(); err != nil {
-		panic(err)
+		log.Error(err.Error())
+		os.Exit(1)
 	}
 }
 
@@ -28,7 +31,8 @@ func main() {
 	case BUILD:
 		perform(Build)
 	default:
-		panic("invalid usage. proper usage is: coffee <util> <backend-template> <frontend-template>")
+		fmt.Println("invalid usage. proper usage is: coffee <util> <backend-template> <frontend-template>")
+		return
 		// TODO: add option to print out all available templates.
 	}
 }

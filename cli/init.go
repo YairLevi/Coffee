@@ -1,14 +1,25 @@
 package main
 
 import (
+	"cli/util"
+	"errors"
 	"fmt"
+	"github.com/charmbracelet/log"
 	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func Init() error {
+	if len(os.Args) < 4 {
+		return util.LogAndReturn(
+			log.Error,
+			"not enough arguments.\nproper usage is: coffee <util> <backend-template> <frontend-template>",
+			errors.New("usage error"),
+		)
+	}
 	var (
 		uiTemplatePath      = "templates/ui/"
 		backendTemplatePath = "templates/backend/"
@@ -20,38 +31,51 @@ func Init() error {
 	baseProjectDir := cwd
 	baseProjectDirUI, _ := filepath.Rel(cwd, "frontend")
 
-	err := os.Mkdir(baseProjectDirUI, 0666)
+	backExists, err := SubdirectoryExists(backendTemplatePath + backend)
+	uiExists, err := SubdirectoryExists(uiTemplatePath + ui)
+	if err != nil {
+		return util.LogAndReturn(
+			log.Error,
+			fmt.Sprint("unexpected cli error"),
+			errors.New("internal error"),
+		)
+	}
+
+	if !backExists {
+		return util.LogAndReturn(
+			log.Error,
+			fmt.Sprint("backend template ", backend, " does not exist. check the valid templates."),
+			errors.New("invalid backend template error"),
+		)
+	}
+	if !uiExists {
+		return util.LogAndReturn(
+			log.Error,
+			fmt.Sprint("frontend template ", ui, " does not exist. check the valid templates."),
+			errors.New("invalid frontend template error"),
+		)
+	}
+	err = os.Mkdir(baseProjectDirUI, 0666)
 	if err != nil {
 		panic(err)
 	}
 
-	backExists, err := SubdirectoryExists(backendTemplatePath + backend)
-	uiExists, err := SubdirectoryExists(uiTemplatePath + ui)
-	if err != nil {
-		return fmt.Errorf("init util unexpected error: %v", err)
-	}
-
-	if !backExists {
-		return fmt.Errorf("invalid backend template")
-	}
-	if !uiExists {
-		return fmt.Errorf("invalid ui template")
-	}
-
+	log.Info("Creating backend template files for " + backend)
 	err = CopyFiles(backendTemplatePath+backend, baseProjectDir)
 	if err != nil {
 		return fmt.Errorf("creating backend files error: %v", err.Error())
 	}
+	log.Info("Creating frontend template files for " + ui)
 	err = CopyFiles(uiTemplatePath+ui, baseProjectDirUI)
 	if err != nil {
 		return fmt.Errorf("creating frontend files error: %v", err.Error())
 	}
-	// err = os.Rename("gitignore", ".gitignore")
-	// err = os.Rename("frontend/gitignore", "frontend/.gitignore")
+	log.Info("Doing some internal work...")
+	err = ResetPrefixedFiles(".")
 	if err != nil {
 		return fmt.Errorf("failed to rename file: %v", err)
 	}
-
+	log.Info("Done! your project is created.")
 	return nil
 }
 
@@ -119,4 +143,29 @@ func SubdirectoryExists(subDir string) (bool, error) {
 
 	// Check if there is at least one entry, indicating the subdirectory exists
 	return len(entries) > 0, nil
+}
+
+func ResetPrefixedFiles(tempPath string) error {
+	return filepath.Walk(tempPath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// Check if the file or directory name starts with a dot "."
+		if strings.HasSuffix(info.Name(), "__") {
+			// Generate the new name by removing the dot and adding a double underscore
+			newName := "." + strings.Replace(info.Name(), "__", "", 1)
+
+			// Construct the new path
+			newPath := filepath.Join(filepath.Dir(path), newName)
+
+			// Rename the file or directory
+			err := os.Rename(path, newPath)
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
 }

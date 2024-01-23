@@ -119,3 +119,8 @@ func moveFile(source, destination string) error {
 
 	return nil
 }
+
+func LogAndReturn(logFunc func(msg interface{}, keyvals ...interface{}), message string, err error) error {
+	logFunc(message)
+	return err
+}
