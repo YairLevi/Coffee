@@ -1,9 +1,9 @@
 package main
 
 import (
-	"cli/util"
 	"errors"
 	"fmt"
+	"github.com/YairLevi/Coffee/cli/util"
 	"github.com/charmbracelet/log"
 	"io"
 	"io/fs"

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"cli/util"
 	"fmt"
+	"github.com/YairLevi/Coffee/cli/util"
 	"github.com/charmbracelet/log"
 	"os"
 	"os/exec"
