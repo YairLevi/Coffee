@@ -12,6 +12,30 @@ import (
 	"strings"
 )
 
+func printAvailableTemplates() {
+	uiTemplatePath := "templates/ui"
+	entries, err := fs.ReadDir(content, uiTemplatePath)
+	if err != nil {
+		log.Error("unexpected internal error.", "err", err)
+		os.Exit(1)
+	}
+	log.Info("Available frontend templates:")
+	for _, entry := range entries {
+		log.Info("\t" + entry.Name())
+	}
+
+	backendTemplatePath := "templates/backend"
+	entries, err = fs.ReadDir(content, backendTemplatePath)
+	if err != nil {
+		log.Error("unexpected internal error.", "err", err)
+		os.Exit(1)
+	}
+	log.Info("Available backend templates:")
+	for _, entry := range entries {
+		log.Info("\t" + entry.Name())
+	}
+}
+
 func Init() error {
 	if len(os.Args) < 4 {
 		return util.LogAndReturn(
@@ -42,18 +66,22 @@ func Init() error {
 	}
 
 	if !backExists {
-		return util.LogAndReturn(
+		err := util.LogAndReturn(
 			log.Error,
 			fmt.Sprint("backend template ", backend, " does not exist. check the valid templates."),
 			errors.New("invalid backend template error"),
 		)
+		printAvailableTemplates()
+		return err
 	}
 	if !uiExists {
-		return util.LogAndReturn(
+		err := util.LogAndReturn(
 			log.Error,
 			fmt.Sprint("frontend template ", ui, " does not exist. check the valid templates."),
 			errors.New("invalid frontend template error"),
 		)
+		printAvailableTemplates()
+		return err
 	}
 	err = os.Mkdir(baseProjectDirUI, 0666)
 	if err != nil {

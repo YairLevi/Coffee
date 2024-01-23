@@ -1,16 +1,32 @@
-> **_NOTE:_**
-> 
-> This package is still in development, and I do intend on adding some more features in the future. For now, I plan on making
-> an example folder with some docs as well. For any requests for features feel free to submit an issue\pull request.
-
-
 # Coffee
 
-Coffee is a light and basic package for writing desktop applications using familiar web technologies and frameworks.
+Coffee is a light and quick package for writing desktop applications using familiar web technologies and frameworks.
 
-----
+---
+
+## Requirements
+- Java 11 or above.
+- Maven installed on you system. You can download [here](https://maven.apache.org/download.cgi).
+---
 ## Get Started
-**1. Maven**
+### CLI 
+Download the dedicated CLI tool [here](https://github.com/YairLevi/Coffee/releases/download/0.1.8/coffee.exe).
+Usage is quick and easy:
+
+* `init`  for creating new projects - 
+  *     > coffee init <backend-template> <frontend-template>
+* `dev`   for running in development mode -
+  *     > coffee dev
+* `build` for packaging the application into a `.jar` file - 
+  *     > coffee build
+
+<br>
+
+### Manual
+If you don't want to use the CLI tool, or add to an existing project.
+Add the latest version you see on the release tab.
+
+#### Maven
 
 Add to `pom.xml`:
 ```xml
@@ -31,7 +47,7 @@ Add to `pom.xml`:
     </dependency>
 </dependencies>
 ```
-**2. Gradle** 
+#### Gradle 
 
 Add it in your root build.gradle at the end of repositories:
 ```groovy
@@ -46,12 +62,10 @@ dependencyResolutionManagement {
 Add dependency
 ```groovy
 dependencies {
-	implementation 'com.github.YairLevi:Coffee2:0.1.1'
+	implementation 'com.github.YairLevi:Coffee2:latest_version'
 }
 ```
-3. JAR
-[Will be added later on. If you want, you could still download the source and build.]
-____
+___
 ## Example
 The code for both Java and Kotlin is pretty much the same.
 ```kotlin
