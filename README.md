@@ -2,12 +2,12 @@
 
 Coffee is a light and quick package for writing desktop applications using familiar web technologies and frameworks.
 
----
 
 ## Requirements
 - Java 11 or above.
 - Maven installed on you system. You can download [here](https://maven.apache.org/download.cgi).
----
+
+
 ## Get Started
 ### CLI 
 Download the dedicated CLI tool [here](https://github.com/YairLevi/Coffee/releases/download/0.1.8/coffee.exe).
@@ -65,7 +65,8 @@ dependencies {
 	implementation 'com.github.YairLevi:Coffee2:latest_version'
 }
 ```
-___
+
+
 ## Example
 The code for both Java and Kotlin is pretty much the same.
 ```kotlin
