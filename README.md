@@ -9,8 +9,12 @@ Coffee is a light and quick package for writing desktop applications using famil
 
 
 ## Get Started
-### CLI 
-Download the dedicated CLI tool [here](https://github.com/YairLevi/Coffee/releases/download/0.1.8/coffee.exe).
+### CLI
+The CLI executable is treated as a virus on browsers and windows defender, so I can't upload the CLI as a `.exe` file.
+But, the easiest way is to download Golang from [here](https://go.dev/dl/), and run the following command:
+
+`go install github.com/YairLevi/Coffee/cli/coffee`
+
 Usage is quick and easy:
 
 * `init`  for creating new projects - 
