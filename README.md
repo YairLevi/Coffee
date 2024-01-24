@@ -2,7 +2,7 @@
 
 Coffee is a light and quick package for writing desktop applications using familiar web technologies and frameworks.
 Uses Webview and is inspired by the [wailsapp project](https://github.com/wailsapp/wails).
-for a more detailed overview of the package, click [here](https://github.com/YairLevi/Coffee/docs/overview.md)
+for a more detailed overview of the package, click [here](https://github.com/YairLevi/Coffee/blob/main/docs/overview.md)
 
 ## Requirements
 - Java 11 or above.
