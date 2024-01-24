@@ -10,4 +10,7 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   title = 'my-app';
+  onClickButton() {
+    require("../../coffee/methods/App").sayHi()
+  }
 }

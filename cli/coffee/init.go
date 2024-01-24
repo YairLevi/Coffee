@@ -192,6 +192,10 @@ func ResetPrefixedFiles(tempPath string) error {
 			if err != nil {
 				return err
 			}
+
+			if info.IsDir() {
+				return filepath.SkipDir
+			}
 		}
 
 		return nil

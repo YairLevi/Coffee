@@ -6,6 +6,11 @@ import (
 	"os"
 )
 
+var sourceDirMapping = map[string]string{
+	"react-ts":   "frontend/dist",
+	"angular-ts": "frontend/dist/angular-ts/browser",
+}
+
 func Build() error {
 	err := os.Chdir("frontend")
 	if err != nil {
@@ -25,7 +30,8 @@ func Build() error {
 	}
 
 	log.Info("Adding frontend to resources")
-	err = util.MoveDirectory("frontend/dist", "src/main/resources/dist")
+	sourceDir := sourceDirMapping[os.Args[2]]
+	err = util.MoveDirectory(sourceDir, "src/main/resources/dist")
 	if err != nil {
 		return err
 	}
