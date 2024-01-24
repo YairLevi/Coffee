@@ -75,6 +75,26 @@ internal object TypeConverter {
                 type = type.replace(javaType, jsTypes[javaType]!!)
             }
         }
+        return toRegular(type)
+    }
+
+    private fun toRegular(type: String): String {
+        if (type.startsWith("Array<")) {
+            val innerType = type.removePrefix("Array<").removeSuffix(">")
+            return "(${toRegular(innerType)})[]"
+        }
+        if (type.startsWith("Set<")) {
+            val innerType = type.removePrefix("Set<").removeSuffix(">")
+            return "(${toRegular(innerType)})[]"
+        }
+        if (type.startsWith("Map<")) {
+            val typeArray = type
+                .removePrefix("Map<")
+                .removeSuffix(">")
+                .split(",")
+                .map { it.replace(" ", "") }
+            return "{[key: ${toRegular(typeArray[0])}]: ${toRegular(typeArray[1])}}"
+        }
         return type
     }
 }
