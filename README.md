@@ -1,28 +1,42 @@
 # Coffee
 
 Coffee is a light and quick package for writing desktop applications using familiar web technologies and frameworks.
-
+Uses Webview and is inspired by the [wailsapp project](https://github.com/wailsapp/wails).
+for a more detailed overview of the package, click [here](https://github.com/YairLevi/Coffee/docs/overview.md)
 
 ## Requirements
 - Java 11 or above.
 - Maven installed on you system. You can download [here](https://maven.apache.org/download.cgi).
+- NodeJS and NPM (18.0+)
 
 
 ## Get Started
 ### CLI
-The CLI executable is treated as a virus on browsers and windows defender, so I can't upload the CLI as a `.exe` file.
-But, the easiest way is to download Golang from [here](https://go.dev/dl/), and run the following command:
+If you have Golang installed, you can use:
+```
+go install github.com/YairLevi/Coffee/cli/coffee
+```
 
-`go install github.com/YairLevi/Coffee/cli/coffee`
+Otherwise, you can download it from [here](https://github.com/YairLevi/Coffee/releases/download/0.1.9/coffee.rar).
+Add the executable to some PATH folder, for convenience.
 
 Usage is quick and easy:
 
 * `init`  for creating new projects - 
-  *     > coffee init <backend-template> <frontend-template>
+
+  ```
+  > coffee init <backend-template> <frontend-template>
+  ```
 * `dev`   for running in development mode -
-  *     > coffee dev
-* `build` for packaging the application into a `.jar` file - 
-  *     > coffee build
+
+  ```
+  > coffee dev
+  ```
+* `build` for packaging the application into a `.jar` file - <br>
+
+  ```
+  > coffee build
+  ```
 
 <br>
 
