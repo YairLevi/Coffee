@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"github.com/YairLevi/Coffee/cli/coffee/util"
 	"github.com/charmbracelet/log"
 	"os"
@@ -12,6 +13,9 @@ var sourceDirMapping = map[string]string{
 }
 
 func Build() error {
+	if len(os.Args) < 3 {
+		return errors.New("specify which ui template to build for (will change later)")
+	}
 	err := os.Chdir("frontend")
 	if err != nil {
 		return err
