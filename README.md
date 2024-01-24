@@ -116,7 +116,7 @@ class MyClass(
 fun main() {
     val win = Window()
     win.setSize(700, 700)
-    win.setTitle("My first Javatron app!")
+    win.setTitle("My first Coffee app!")
     win.setURL("http://localhost:5173")
     // Or some html... using win.setHTML("<!DOCTYPE...")
     win.bind(
