@@ -13,6 +13,7 @@ target/
 *.iml
 *.ipr
 *.dll
+*.rar
 
 ### Eclipse ###
 .apt_generated
@@ -46,3 +47,4 @@ frontend
 ## TESTS ##
 src/main/kotlin/Main.kt
 cli/coffee/cli.exe
+tests
