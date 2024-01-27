@@ -6,13 +6,11 @@ class App(
     val name: String = "",
     val age: Int = 0,
     val list: List<String> = emptyList(),
-    val set: Set<String> = emptySet(),
     val map: Map<String, Int> = emptyMap(),
-    val complex: Map<String, List<Set<App>>> = emptyMap()
 )
 
-fun main() {
-    val win = Window(dev = true)
+fun main(args: Array<String>) {
+    val win = Window(dev = true, args = args)
     win.setSize(700, 700)
     win.setTitle("My first Javatron app!")
 
