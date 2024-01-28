@@ -3,35 +3,32 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/charmbracelet/log"
 	"os"
 )
 
 //go:embed templates/*
 var content embed.FS
 
-func perform(f func() error) {
-	if err := f(); err != nil {
-		log.Error(err.Error())
-		os.Exit(1)
-	}
-}
-
-const INIT = "init"
-const DEV = "dev"
-const BUILD = "build"
+const (
+	INIT     = "init"
+	DEV      = "dev"
+	BUILD    = "build"
+	GENERATE = "generate"
+)
 
 func main() {
 	cmd := os.Args[1]
 	switch cmd {
 	case INIT:
-		perform(Init)
+		Init()
+	case GENERATE:
+		Generate()
 	case DEV:
-		perform(Dev)
+		Dev()
 	case BUILD:
-		perform(Build)
+		Build()
 	default:
-		fmt.Println("invalid usage. proper usage is: coffee <util> <backend-template> <frontend-template>")
+		fmt.Println("invalid usage. undefined command " + cmd)
 		return
 		// TODO: add option to print out all available templates.
 	}

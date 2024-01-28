@@ -5,62 +5,79 @@ import (
 	"github.com/YairLevi/Coffee/cli/coffee/util"
 	"github.com/charmbracelet/log"
 	"os"
-	"os/exec"
 )
 
-func Dev() error {
+func Dev() {
 	err := os.Chdir("frontend")
 	if err != nil {
-		fmt.Println(err.Error())
-		return err
-	}
-	log.Info("Installing dependencies")
-	err = exec.Command("npm", "install").Run()
-	if err != nil {
-		fmt.Println(err.Error())
-		return err
+		log.Error("Can't go to frontend directory.", "err", err)
+		return
 	}
 
-	log.Info("Starting development server")
-	devServer := exec.Command("npm", "run", "dev")
-	devServer.Stderr = os.Stderr
-	err = devServer.Start()
+	_, err = RunCommand(CmdProps{
+		Cmd:       CompileBackend,
+		Sync:      true,
+		Opts:      Opts(WithStderr),
+		LogBefore: "Compiling Application",
+	})
 	if err != nil {
-		log.Error(err.Error())
-		return err
+		log.Error("Failed to compile backend code.", "err", err)
+		return
 	}
+
+	_, err = RunCommand(CmdProps{
+		Cmd:       GenerateAppBinds,
+		LogBefore: "Generating type-safe frontend bindings...",
+		Sync:      true,
+		Opts:      Opts(WithStderr),
+	})
+	if err != nil {
+		log.Errorf("Failed to create bindings. %v", err)
+		return
+	}
+
+	_, err = RunCommand(CmdProps{
+		Cmd:       InstallFrontendDependencies,
+		LogBefore: "Installing dependencies",
+		Sync:      true,
+	})
+	if err != nil {
+		log.Error("Failed to download NPM dependencies.", "err", err)
+		return
+	}
+
+	devServerCmd, err := RunCommand(CmdProps{
+		Cmd:       LaunchDevServer,
+		LogBefore: "Starting development server",
+		Opts:      Opts(WithStderr),
+		Sync:      false,
+	})
+	if err != nil {
+		log.Error("Failed to start dev server.", "err", err)
+		return
+	}
+	defer func() {
+		log.Info("Shutting down frontend dev server")
+		err = util.StopProcessTree(devServerCmd.Process.Pid)
+		if err != nil {
+			log.Error("Failed to close the entire process tree of the dev server.", "err", err)
+		}
+	}()
 
 	err = os.Chdir("..")
 	if err != nil {
-		fmt.Println(err.Error())
-		return err
+		log.Error("Can't go back to project directory.", "err", err)
+		return
 	}
 
-	log.Info("Compiling Application")
-	compile := exec.Command("mvn", "clean", "compile")
-	compile.Stderr = os.Stderr
-	err = compile.Run()
+	_, err = RunCommand(CmdProps{
+		Cmd:       LaunchApp,
+		Opts:      Opts(WithStderr, WithStdout),
+		Sync:      true,
+		LogBefore: "Running. application logging below",
+	})
 	if err != nil {
-		log.Error(err.Error())
-		return err
+		fmt.Println("Failed to launch application.", "err", err)
+		return
 	}
-
-	log.Info("Running. application logging below")
-	log.Info("\n==================================\n")
-	cmd := exec.Command("mvn", "exec:java")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err = cmd.Run()
-	if err != nil {
-		fmt.Println(err.Error())
-		return err
-	}
-	log.Info("\n==================================\n")
-	log.Info("Shutting down frontend dev server")
-	err = util.StopProcessTree(devServer.Process.Pid)
-	if err != nil {
-		log.Error("Failed to close the entire process tree of the dev server.")
-		return err
-	}
-	return nil
 }

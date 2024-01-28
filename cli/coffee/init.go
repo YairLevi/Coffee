@@ -1,9 +1,7 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"github.com/YairLevi/Coffee/cli/coffee/util"
 	"github.com/charmbracelet/log"
 	"io"
 	"io/fs"
@@ -12,38 +10,12 @@ import (
 	"strings"
 )
 
-func printAvailableTemplates() {
-	uiTemplatePath := "templates/ui"
-	entries, err := fs.ReadDir(content, uiTemplatePath)
-	if err != nil {
-		log.Error("unexpected internal error.", "err", err)
-		os.Exit(1)
-	}
-	log.Info("Available frontend templates:")
-	for _, entry := range entries {
-		log.Info("\t" + entry.Name())
-	}
-
-	backendTemplatePath := "templates/backend"
-	entries, err = fs.ReadDir(content, backendTemplatePath)
-	if err != nil {
-		log.Error("unexpected internal error.", "err", err)
-		os.Exit(1)
-	}
-	log.Info("Available backend templates:")
-	for _, entry := range entries {
-		log.Info("\t" + entry.Name())
-	}
-}
-
-func Init() error {
+func Init() {
 	if len(os.Args) < 4 {
-		return util.LogAndReturn(
-			log.Error,
-			"not enough arguments.\nproper usage is: coffee <util> <backend-template> <frontend-template>",
-			errors.New("usage error"),
-		)
+		log.Error("not enough arguments.\nproper usage is: coffee init <backend-template> <frontend-template>")
+		return
 	}
+
 	var (
 		uiTemplatePath      = "templates/ui/"
 		backendTemplatePath = "templates/backend/"
@@ -58,31 +30,21 @@ func Init() error {
 	backExists, err := SubdirectoryExists(backendTemplatePath + backend)
 	uiExists, err := SubdirectoryExists(uiTemplatePath + ui)
 	if err != nil {
-		return util.LogAndReturn(
-			log.Error,
-			fmt.Sprint("unexpected cli error"),
-			errors.New("internal error"),
-		)
+		log.Error("unexpected cli error")
+		return
 	}
 
 	if !backExists {
-		err := util.LogAndReturn(
-			log.Error,
-			fmt.Sprint("backend template ", backend, " does not exist. check the valid templates."),
-			errors.New("invalid backend template error"),
-		)
-		printAvailableTemplates()
-		return err
+		log.Error("backend template ", backend, " does not exist. check the valid templates.")
+		PrintAvailableTemplates()
+		return
 	}
 	if !uiExists {
-		err := util.LogAndReturn(
-			log.Error,
-			fmt.Sprint("frontend template ", ui, " does not exist. check the valid templates."),
-			errors.New("invalid frontend template error"),
-		)
-		printAvailableTemplates()
-		return err
+		log.Error("frontend template ", ui, " does not exist. check the valid templates.")
+		PrintAvailableTemplates()
+		return
 	}
+
 	err = os.Mkdir(baseProjectDirUI, 0666)
 	if err != nil {
 		panic(err)
@@ -91,20 +53,22 @@ func Init() error {
 	log.Info("Creating backend template files for " + backend)
 	err = CopyFiles(backendTemplatePath+backend, baseProjectDir)
 	if err != nil {
-		return fmt.Errorf("creating backend files error: %v", err.Error())
+		log.Errorf("creating backend files error: %v", err.Error())
+		return
 	}
 	log.Info("Creating frontend template files for " + ui)
 	err = CopyFiles(uiTemplatePath+ui, baseProjectDirUI)
 	if err != nil {
-		return fmt.Errorf("creating frontend files error: %v", err.Error())
+		log.Errorf("creating frontend files error: %v", err.Error())
+		return
 	}
 	log.Info("Doing some internal work...")
 	err = ResetPrefixedFiles(".")
 	if err != nil {
-		return fmt.Errorf("failed to rename file: %v", err)
+		log.Errorf("failed to rename file: %v", err)
+		return
 	}
 	log.Info("Done! your project is created.")
-	return nil
 }
 
 func CopyFiles(src, dest string) error {
@@ -164,7 +128,7 @@ func SubdirectoryExists(subDir string) (bool, error) {
 	entries, err := fs.ReadDir(content, subDir)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return false, nil // Subdirectory does not exist
+			return false, fmt.Errorf("directory doesn't exist") // Subdirectory does not exist
 		}
 		return false, fmt.Errorf("error reading directory: %v", err)
 	}
@@ -200,4 +164,28 @@ func ResetPrefixedFiles(tempPath string) error {
 
 		return nil
 	})
+}
+
+func PrintAvailableTemplates() {
+	uiTemplatePath := "templates/ui"
+	entries, err := fs.ReadDir(content, uiTemplatePath)
+	if err != nil {
+		log.Error("unexpected internal error.", "err", err)
+		os.Exit(1)
+	}
+	log.Info("Available frontend templates:")
+	for _, entry := range entries {
+		log.Info("\t" + entry.Name())
+	}
+
+	backendTemplatePath := "templates/backend"
+	entries, err = fs.ReadDir(content, backendTemplatePath)
+	if err != nil {
+		log.Error("unexpected internal error.", "err", err)
+		os.Exit(1)
+	}
+	log.Info("Available backend templates:")
+	for _, entry := range entries {
+		log.Info("\t" + entry.Name())
+	}
 }
