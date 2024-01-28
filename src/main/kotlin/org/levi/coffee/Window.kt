@@ -12,6 +12,7 @@ import org.levi.coffee.internal.MethodBinder
 import org.levi.coffee.internal.util.FileUtil
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.File
 import java.net.ServerSocket
 import java.util.*
 import java.util.function.Consumer
@@ -19,11 +20,7 @@ import kotlin.system.exitProcess
 
 class Window(val args: Array<String>) {
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
-    private val dev = run {
-        val className: String = Window::class.java.getName().replace('.', '/')
-        val classJar: String = Window::class.java.getResource("/$className.class")?.toString() ?: ""
-        !classJar.startsWith("jar:")
-    }
+    private val dev = !File(Window::class.java.getProtectionDomain().codeSource.location.toURI()).isFile()
     private val _beforeStartCallbacks: MutableList<Runnable> = ArrayList()
     private val _onCloseCallbacks: MutableList<Runnable> = ArrayList()
     private val _bindObjects = ArrayList<Any>()
