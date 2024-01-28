@@ -35,9 +35,9 @@ Usage is quick and easy:
 * `build` for packaging the application into a `.jar` file - <br>
 
   ```
-  > coffee build
+  > coffee build <frontend-template>
   ```
-
+  > soon, you will not need to specify the frontend template in the build command. this is due to a temporary issue.
 
 ## Example
 The code for both Java and Kotlin is pretty much the same.
