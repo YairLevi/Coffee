@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"github.com/YairLevi/Coffee/cli/coffee/util"
 	"github.com/charmbracelet/log"
 	"os"
@@ -12,41 +11,67 @@ var sourceDirMapping = map[string]string{
 	"angular-ts": "frontend/dist/angular-ts/browser",
 }
 
-func Build() error {
+func Build() {
 	if len(os.Args) < 3 {
-		return errors.New("specify which ui template to build for (will change later)")
+		log.Error("specify which ui template to build for (will change later)")
+		return
 	}
 	err := os.Chdir("frontend")
 	if err != nil {
-		return err
+		log.Errorf("error: %v", err)
+		return
 	}
 
-	log.Info("Making frontend dist folder")
-	buildFront := util.CommandWithLog("npm", "run", "build")
-	err = buildFront.Run()
+	_, err = RunCommand(CmdProps{
+		Cmd:       BuildFrontend,
+		Sync:      true,
+		LogBefore: "Making frontend dist folder",
+		Opts:      Opts(WithStdout, WithStderr),
+	})
 	if err != nil {
-		return err
+		log.Errorf("Failed to build frontend: %v", err)
+		return
 	}
 
 	err = os.Chdir("..")
 	if err != nil {
-		return err
+		log.Errorf("error moving directory: %v", err)
+		return
 	}
 
 	log.Info("Adding frontend to resources")
 	sourceDir := sourceDirMapping[os.Args[2]]
 	err = util.MoveDirectory(sourceDir, "src/main/resources/dist")
 	if err != nil {
-		return err
+		log.Errorf("Failed to move dist folder to the resources folder.  %v", err)
+		return
 	}
 
-	log.Info("Bundling to JAR")
-	buildApp := util.CommandWithLog("mvn", "clean", "compile", "assembly:single")
-	err = buildApp.Run()
+	log.Info("Preparing for bundle")
+	file, err := os.Create("src/main/resources/__jar__")
 	if err != nil {
-		return err
+		log.Errorf("Unexpected error: production flag was not able to set. %v", err)
+		return
+	}
+	file.Close()
+
+	_, err = RunCommand(CmdProps{
+		Cmd:       BundleApp,
+		LogBefore: "Bundling to JAR",
+		Sync:      true,
+		Opts:      Opts(WithStdout, WithStderr),
+	})
+	if err != nil {
+		log.Errorf("Failed to build app into JAR. %v", err)
+		return
+	}
+
+	log.Info("Post bundle cleanup")
+	err = os.Remove("src/main/resources/__jar__")
+	if err != nil {
+		log.Errorf("Unexpected error: was not able to delete temporary production flag. %v", err)
+		return
 	}
 
 	log.Info("Done. your JAR is located at `./target")
-	return nil
 }

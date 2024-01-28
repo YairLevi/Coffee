@@ -11,25 +11,22 @@ import org.levi.coffee.internal.MethodBinder
 import org.levi.coffee.internal.util.FileUtil
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.net.ServerSocket
 import java.util.*
 import java.util.function.Consumer
 import kotlin.system.exitProcess
 
-class Window(val dev: Boolean = true) {
+class Window(val args: Array<String>) {
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
-
-    private val _webview: Webview = Webview(true)
     private val _beforeStartCallbacks: MutableList<Runnable> = ArrayList()
     private val _onCloseCallbacks: MutableList<Runnable> = ArrayList()
     private val _bindObjects = ArrayList<Any>()
-    private var _url: String = ""
+    private val _webviewInitFunctions: MutableList<(wv: Webview) -> Unit> = ArrayList()
 
-    init {
-        setSize(800, 600)
-    }
+    private val dev = Thread.currentThread().contextClassLoader.getResource("__jar__") == null
 
     fun setURL(url: String) {
-        _url = url
+        _webviewInitFunctions.add { it.loadURL(url) }
     }
 
     fun setHTMLFromResource(resourcePath: String) {
@@ -38,7 +35,7 @@ class Window(val dev: Boolean = true) {
             log.error("Resource at $resourcePath was not found.")
             exitProcess(1)
         }
-        _url = resource.toURI().toString()
+        this.setURL(resource.toURI().toString())
     }
 
     fun setRawHTMLFromFile(path: String, isBase64: Boolean = false) {
@@ -48,32 +45,33 @@ class Window(val dev: Boolean = true) {
     }
 
     fun setRawHTML(html: String, isBase64: Boolean = false) {
-        _url = "data:text/html"
+        var url = "data:text/html"
         if (isBase64) {
-            _url += ";base64,${Base64.getEncoder().encodeToString(html.toByteArray())}"
+            url += ";base64,${Base64.getEncoder().encodeToString(html.toByteArray())}"
         } else {
-            _url += ",$html"
+            url += ",$html"
         }
+        this.setURL(url)
     }
 
     fun setTitle(title: String) {
-        _webview.setTitle(title)
+        _webviewInitFunctions.add { it.setTitle(title) }
     }
 
     fun setSize(width: Int, height: Int) {
-        _webview.setSize(width, height)
+        _webviewInitFunctions.add { it.setSize(width, height) }
     }
 
     fun setMinSize(minWidth: Int, minHeight: Int) {
-        _webview.setMinSize(minWidth, minHeight)
+        _webviewInitFunctions.add { it.setMinSize(minWidth, minHeight) }
     }
 
     fun setMaxSize(maxWidth: Int, maxHeight: Int) {
-        _webview.setMaxSize(maxWidth, maxHeight)
+        _webviewInitFunctions.add { it.setMaxSize(maxWidth, maxHeight) }
     }
 
     fun setFixedSize(fixedWidth: Int, fixedHeight: Int) {
-        _webview.setFixedSize(fixedWidth, fixedHeight)
+        _webviewInitFunctions.add { it.setFixedSize(fixedWidth, fixedHeight) }
     }
 
     fun bind(vararg objects: Any) {
@@ -92,6 +90,20 @@ class Window(val dev: Boolean = true) {
 
 
     fun run() {
+        var isGenerateOnly = false
+        if (args.size == 1) {
+            isGenerateOnly = args[0] == "generate"
+        }
+
+        if (isGenerateOnly) {
+            val cg = CodeGenerator()
+            cg.generateTypes(*_bindObjects.toTypedArray())
+            cg.generateFunctions(*_bindObjects.toTypedArray())
+            cg.generateEventsAPI()
+            exitProcess(0)
+        }
+
+        // I know, Oh no, duplicate code...
         if (dev) {
             val cg = CodeGenerator()
             cg.generateTypes(*_bindObjects.toTypedArray())
@@ -101,7 +113,9 @@ class Window(val dev: Boolean = true) {
 
         var server: NettyApplicationEngine? = null
         if (!dev) {
-            val prodPort = 4567
+            val s = ServerSocket(0);
+            val prodPort = s.localPort
+            s.close()
             server = embeddedServer(Netty, port = prodPort, host = "localhost") {
                 routing {
                     staticResources("/", "dist") {
@@ -111,14 +125,15 @@ class Window(val dev: Boolean = true) {
                 }
             }
             server.start()
-            _url = "http://localhost:$prodPort"
+            _webviewInitFunctions.add { it.loadURL("http://localhost:$prodPort") }
         }
 
+        val _webview = Webview(dev)
+        _webviewInitFunctions.forEach { it.invoke(_webview) }
         MethodBinder.bind(_webview, *_bindObjects.toTypedArray())
         Ipc.setWebview(_webview)
         _beforeStartCallbacks.forEach(Consumer { it.run() })
 
-        _webview.loadURL(_url)
         _webview.run()
 
         _onCloseCallbacks.forEach(Consumer { it.run() })
