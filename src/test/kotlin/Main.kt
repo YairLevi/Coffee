@@ -10,17 +10,17 @@ class App(
 )
 
 fun main(args: Array<String>) {
-    val win = Window(dev = true, args = args)
-    win.setSize(700, 700)
-    win.setTitle("My first Javatron app!")
-
-    win.setURL("http://localhost:5173")
-    win.bind(
-        App()
-    )
-
-    win.addBeforeStartCallback { println("Started app...") }
-    win.addOnCloseCallback { println("Closed the app!") }
-
-    win.run()
+//    val win = Window(args = args)
+//    win.setSize(700, 700)
+//    win.setTitle("My first Javatron app!")
+//
+//    win.setURL("http://localhost:5173")
+//    win.bind(
+//        App()
+//    )
+//
+//    win.addBeforeStartCallback { println("Started app...") }
+//    win.addOnCloseCallback { println("Closed the app!") }
+//
+//    win.run()
 }
