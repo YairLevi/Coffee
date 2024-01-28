@@ -8,13 +8,7 @@ import (
 )
 
 func Dev() {
-	err := os.Chdir("frontend")
-	if err != nil {
-		log.Error("Can't go to frontend directory.", "err", err)
-		return
-	}
-
-	_, err = RunCommand(CmdProps{
+	_, err := RunCommand(CmdProps{
 		Cmd:       CompileBackend,
 		Sync:      true,
 		Opts:      Opts(WithStderr),
@@ -35,6 +29,12 @@ func Dev() {
 		log.Errorf("Failed to create bindings. %v", err)
 		return
 	}
+
+	err = os.Chdir("frontend")
+    	if err != nil {
+    		log.Error("Can't go to frontend directory.", "err", err)
+    		return
+    	}
 
 	_, err = RunCommand(CmdProps{
 		Cmd:       InstallFrontendDependencies,
