@@ -30,7 +30,8 @@ func Init() {
 	backExists, err := SubdirectoryExists(backendTemplatePath + backend)
 	uiExists, err := SubdirectoryExists(uiTemplatePath + ui)
 	if err != nil {
-		log.Error("unexpected cli error")
+		log.Errorf("unexpected cli error. %v", err)
+		PrintAvailableTemplates()
 		return
 	}
 
