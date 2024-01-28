@@ -47,6 +47,13 @@ func Build() {
 		return
 	}
 
+	log.Info("Preparing for bundle")
+	_, err = os.Create("src/main/resources/__jar__")
+	if err != nil {
+		log.Errorf("Unexpected error: production flag was not able to set. %v", err)
+		return
+	}
+
 	_, err = RunCommand(CmdProps{
 		Cmd:       BundleApp,
 		LogBefore: "Bundling to JAR",
@@ -57,5 +64,13 @@ func Build() {
 		log.Errorf("Failed to build app into JAR. %v", err)
 		return
 	}
+
+	log.Info("Post bundle cleanup")
+	err = os.Remove("src/main/resources/__jar__")
+	if err != nil {
+		log.Errorf("Unexpected error: was not able to delete temporary production flag. %v", err)
+		return
+	}
+
 	log.Info("Done. your JAR is located at `./target")
 }

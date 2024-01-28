@@ -19,10 +19,11 @@ import kotlin.system.exitProcess
 class Window(val args: Array<String>) {
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
     private val _beforeStartCallbacks: MutableList<Runnable> = ArrayList()
-    private val dev = Thread.currentThread().contextClassLoader.getResource("__jar__") == null
     private val _onCloseCallbacks: MutableList<Runnable> = ArrayList()
     private val _bindObjects = ArrayList<Any>()
     private val _webviewInitFunctions: MutableList<(wv: Webview) -> Unit> = ArrayList()
+
+    private val dev = Thread.currentThread().contextClassLoader.getResource("__jar__") == null
 
     fun setURL(url: String) {
         _webviewInitFunctions.add { it.loadURL(url) }
