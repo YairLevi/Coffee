@@ -2,7 +2,6 @@ package org.levi.coffee
 
 
 import dev.webview.Webview
-import io.ktor.network.sockets.*
 import io.ktor.server.engine.*
 import io.ktor.server.http.content.*
 import io.ktor.server.netty.*
@@ -12,7 +11,6 @@ import org.levi.coffee.internal.MethodBinder
 import org.levi.coffee.internal.util.FileUtil
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.File
 import java.net.ServerSocket
 import java.util.*
 import java.util.function.Consumer
@@ -20,8 +18,8 @@ import kotlin.system.exitProcess
 
 class Window(val args: Array<String>) {
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
-    private val dev = !File(Window::class.java.getProtectionDomain().codeSource.location.toURI()).isFile()
     private val _beforeStartCallbacks: MutableList<Runnable> = ArrayList()
+    private val dev = Thread.currentThread().contextClassLoader.getResource("__jar__") == null
     private val _onCloseCallbacks: MutableList<Runnable> = ArrayList()
     private val _bindObjects = ArrayList<Any>()
     private val _webviewInitFunctions: MutableList<(wv: Webview) -> Unit> = ArrayList()
