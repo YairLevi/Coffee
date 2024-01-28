@@ -4,6 +4,7 @@ import (
 	"github.com/YairLevi/Coffee/cli/coffee/util"
 	"github.com/charmbracelet/log"
 	"os"
+	"time"
 )
 
 var sourceDirMapping = map[string]string{
@@ -65,6 +66,7 @@ func Build() {
 		return
 	}
 
+	time.Sleep(500 * time.Millisecond)
 	log.Info("Post bundle cleanup")
 	err = os.Remove("src/main/resources/__jar__")
 	if err != nil {
