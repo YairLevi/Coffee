@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"github.com/YairLevi/Coffee/cli/coffee/util"
 	"github.com/charmbracelet/log"
+	"net"
 	"os"
+	"time"
 )
 
 func Dev() {
@@ -63,6 +65,18 @@ func Dev() {
 			log.Error("Failed to close the entire process tree of the dev server.", "err", err)
 		}
 	}()
+	log.Info("Waiting for dev server to fully start")
+	for {
+		host, port := "localhost", "5173"
+		timeout := time.Millisecond * 500
+		conn, err := net.DialTimeout("tcp", net.JoinHostPort(host, port), timeout)
+		if err == nil {
+			break
+		}
+		if conn != nil {
+			conn.Close()
+		}
+	}
 
 	err = os.Chdir("..")
 	if err != nil {
