@@ -22,7 +22,7 @@ class Window(val args: Array<String>) {
     private val dev = run {
         val className: String = Window::class.java.getName().replace('.', '/')
         val classJar: String = Window::class.java.getResource("/$className.class")?.toString() ?: ""
-        classJar.startsWith("jar:")
+        !classJar.startsWith("jar:")
     }
     private val _beforeStartCallbacks: MutableList<Runnable> = ArrayList()
     private val _onCloseCallbacks: MutableList<Runnable> = ArrayList()
