@@ -14,7 +14,7 @@ for a more detailed overview of the package, click [here](https://github.com/Yai
 ### CLI
 If you have Golang installed, you can use:
 ```
-go install github.com/YairLevi/Coffee/cli/coffee
+go install github.com/YairLevi/Coffee/cli/coffee@latest
 ```
 
 Otherwise, you can download it from [here](https://github.com/YairLevi/Coffee/releases/download/0.1.9/coffee.rar).
@@ -37,52 +37,6 @@ Usage is quick and easy:
   ```
   > coffee build
   ```
-
-<br>
-
-### Manual
-If you don't want to use the CLI tool, or add to an existing project.
-Add the latest version you see on the release tab.
-
-#### Maven
-
-Add to `pom.xml`:
-```xml
-<repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
-
-<!-- ... -->
-
-<dependencies>
-    <dependency>
-        <groupId>com.github.YairLevi</groupId>
-        <artifactId>Coffee</artifactId>
-        <version>latest_version</version>
-    </dependency>
-</dependencies>
-```
-#### Gradle 
-
-Add it in your root build.gradle at the end of repositories:
-```groovy
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        mavenCentral()
-        maven { url 'https://jitpack.io' }
-    }
-}
-```
-Add dependency
-```groovy
-dependencies {
-	implementation 'com.github.YairLevi:Coffee2:latest_version'
-}
-```
 
 
 ## Example
