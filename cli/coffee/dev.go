@@ -11,7 +11,7 @@ func Dev() {
 	_, err := RunCommand(CmdProps{
 		Cmd:       CompileBackend,
 		Sync:      true,
-		Opts:      Opts(WithStderr),
+		Opts:      Opts(WithStderr, WithStdout),
 		LogBefore: "Compiling Application",
 	})
 	if err != nil {
@@ -31,10 +31,10 @@ func Dev() {
 	}
 
 	err = os.Chdir("frontend")
-    	if err != nil {
-    		log.Error("Can't go to frontend directory.", "err", err)
-    		return
-    	}
+	if err != nil {
+		log.Error("Can't go to frontend directory.", "err", err)
+		return
+	}
 
 	_, err = RunCommand(CmdProps{
 		Cmd:       InstallFrontendDependencies,
