@@ -4,7 +4,6 @@ import (
 	"github.com/YairLevi/Coffee/cli/coffee/util"
 	"github.com/charmbracelet/log"
 	"os"
-	"time"
 )
 
 var sourceDirMapping = map[string]string{
@@ -49,11 +48,12 @@ func Build() {
 	}
 
 	log.Info("Preparing for bundle")
-	_, err = os.Create("src/main/resources/__jar__")
+	file, err := os.Create("src/main/resources/__jar__")
 	if err != nil {
 		log.Errorf("Unexpected error: production flag was not able to set. %v", err)
 		return
 	}
+	file.Close()
 
 	_, err = RunCommand(CmdProps{
 		Cmd:       BundleApp,
@@ -66,7 +66,6 @@ func Build() {
 		return
 	}
 
-	time.Sleep(500 * time.Millisecond)
 	log.Info("Post bundle cleanup")
 	err = os.Remove("src/main/resources/__jar__")
 	if err != nil {
