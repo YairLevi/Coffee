@@ -33,7 +33,7 @@
         <dependency>
             <groupId>com.github.YairLevi</groupId>
             <artifactId>Coffee</artifactId>
-            <version>0.2.1-test-7</version>
+            <version>0.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
