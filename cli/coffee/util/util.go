@@ -1,6 +1,7 @@
 package util
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net"
@@ -123,4 +124,26 @@ func moveFile(source, destination string) error {
 func LogAndReturn(logFunc func(msg interface{}, keyvals ...interface{}), message string, err error) error {
 	logFunc(message)
 	return err
+}
+
+func ReadNameFromJSONFile(filePath string) (string, error) {
+	// Read the content of the JSON file
+	fileContent, err := os.ReadFile(filePath)
+	if err != nil {
+		return "", err
+	}
+
+	// Create a Person struct to unmarshal the JSON content
+	jsonContent := struct {
+		Name string `json:"name"`
+	}{}
+
+	// Unmarshal the JSON content into the Person struct
+	err = json.Unmarshal(fileContent, &jsonContent)
+	if err != nil {
+		return "", err
+	}
+
+	// Return the value of the "name" field
+	return jsonContent.Name, nil
 }

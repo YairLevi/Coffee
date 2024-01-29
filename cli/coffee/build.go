@@ -12,10 +12,6 @@ var sourceDirMapping = map[string]string{
 }
 
 func Build() {
-	if len(os.Args) < 3 {
-		log.Error("specify which ui template to build for (will change later)")
-		return
-	}
 	err := os.Chdir("frontend")
 	if err != nil {
 		log.Errorf("error: %v", err)
@@ -40,7 +36,12 @@ func Build() {
 	}
 
 	log.Info("Adding frontend to resources")
-	sourceDir := sourceDirMapping[os.Args[2]]
+	name, err := util.ReadNameFromJSONFile("frontend/package.json")
+	if err != nil {
+		log.Errorf("Error reading from package.json file. %v", err)
+		return
+	}
+	sourceDir := sourceDirMapping[name]
 	err = util.MoveDirectory(sourceDir, "src/main/resources/dist")
 	if err != nil {
 		log.Errorf("Failed to move dist folder to the resources folder.  %v", err)
