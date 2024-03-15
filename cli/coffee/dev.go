@@ -23,7 +23,7 @@ func Dev() {
 		Cmd:       GenerateAppBinds,
 		LogBefore: "Generating type-safe frontend bindings...",
 		Sync:      true,
-		Opts:      Opts(WithStderr),
+		Opts:      Opts(WithStderr, WithStdout),
 	})
 	if err != nil {
 		log.Errorf("Failed to create bindings. %v", err)
