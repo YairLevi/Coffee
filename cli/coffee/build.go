@@ -12,9 +12,30 @@ var sourceDirMapping = map[string]string{
 }
 
 func Build() {
-	err := os.Chdir("frontend")
+	_, err := RunCommand(CmdProps{
+		Cmd:       GenerateAppBinds,
+		LogBefore: "Generating type-safe frontend bindings...",
+		Sync:      true,
+		Opts:      Opts(WithStderr),
+	})
 	if err != nil {
-		log.Errorf("error: %v", err)
+		log.Errorf("Failed to create bindings. %v", err)
+		return
+	}
+
+	err = os.Chdir("frontend")
+	if err != nil {
+		log.Error("Can't go to frontend directory.", "err", err)
+		return
+	}
+
+	_, err = RunCommand(CmdProps{
+		Cmd:       InstallFrontendDependencies,
+		LogBefore: "Installing dependencies",
+		Sync:      true,
+	})
+	if err != nil {
+		log.Error("Failed to download NPM dependencies.", "err", err)
 		return
 	}
 

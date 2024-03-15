@@ -13,8 +13,8 @@ const (
 	BuildFrontend               = "npm run build"
 	CompileBackend              = "mvn clean compile"
 	BundleApp                   = "mvn clean compile assembly:single"
-	LaunchApp                   = "mvn clean exec:java"
-	GenerateAppBinds            = "mvn clean exec:java -Dexec.args=\"generate\""
+	LaunchApp                   = "mvn exec:java"
+	GenerateAppBinds            = "mvn exec:java -Dexec.args=\"generate\""
 )
 
 type Opt = func(cmd *exec.Cmd)
