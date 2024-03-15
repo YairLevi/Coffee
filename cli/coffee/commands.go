@@ -11,10 +11,10 @@ const (
 	InstallFrontendDependencies = "npm install"
 	LaunchDevServer             = "npm run dev"
 	BuildFrontend               = "npm run build"
-	CompileBackend              = "mvn compile"
-	BundleApp                   = "mvn compile assembly:single"
-	LaunchApp                   = "mvn exec:java"
-	GenerateAppBinds            = "mvn exec:java -Dexec.args=\"generate\""
+	CompileBackend              = "mvn clean compile"
+	BundleApp                   = "mvn clean compile assembly:single"
+	LaunchApp                   = "mvn clean exec:java"
+	GenerateAppBinds            = "mvn clean exec:java -Dexec.args=\"generate\""
 )
 
 type Opt = func(cmd *exec.Cmd)
