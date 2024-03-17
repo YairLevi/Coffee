@@ -11,7 +11,7 @@ const (
 	InstallFrontendDependencies = "npm install"
 	LaunchDevServer             = "npm run dev"
 	BuildFrontend               = "npm run build"
-	CompileBackend              = "mvn compile"
+	CompileBackend              = "mvn clean compile"
 	BundleApp                   = "mvn compile assembly:single"
 	LaunchApp                   = "mvn exec:java"
 	GenerateAppBinds            = "mvn exec:java -Dexec.args=\"generate\""
